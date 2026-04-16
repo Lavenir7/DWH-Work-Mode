@@ -141,6 +141,68 @@ git pull # 先拉取、同步远程的 commit
   
   > **git reset** 详细使用见 [附录 · git reset](#git reset)
 
+#### 建立新分支来实现新功能
+
+> [!note]
+>
+> 在需要加入新功能、但怕破坏原来的内容时，我们需要新建一个分支来实现、调试新功能。
+
+- 首先，确保在主分支（如 `master`），并拉取最新代码，避免主分支落后
+
+  ```sh
+  git checkout master
+  git pull
+  ```
+
+- 在本地仓库创建并切换到新分支（如 `new-func`）
+
+  ```sh
+  git checkout -b new-func
+  ```
+
+- 在新分支进行实现、调试新功能
+
+  ```sh
+  # new, modify, delete ...
+  git add .
+  git commit -m "new function"
+  ```
+
+- 推送新分支到远端
+
+  ```sh
+  git push -u origin new-func # 第一次推送需要建立本地分支和远端分支的跟踪关系
+  git push # 之后推送直接 push
+  ```
+
+- 新功能编写结束后，分两种情况进行处理：
+
+  - 如果新功能可行，则将新功能合并到主分支，并删除新功能分支
+
+    ```sh
+    git checkout master # 切换到主分支
+    git pull
+    git merge new-func # 合并新功能到主分支
+    git push origin master # 推送主分支到远端
+    # 删除新功能分支
+    git branch -d new-func # 删除本地新功能分支
+    git push origin --delete new-func # 同步删除远端新功能分支（如果新功能分支推送到过远端）
+    ```
+
+  - 如果新功能不可行，则强制删除新功能分支
+
+    ```sh
+    git checkout master # 先切换到主分支（不能删除当前正在使用的分支）
+    git branch -D new-func # 强制删除本地新功能分支
+    git push origin --delete new-func # 同步删除远端新功能分支（如果新功能分支推送到过远端）
+    ```
+
+  > [!warning]
+  >
+  > 在多人协作的场景中，`git pull` 或 `git merge` 过程中可能会出现冲突。
+  >
+  > 此时需要先解决冲突并提交，再继续后续操作。
+
 #### 双端同时工作
 
 在双端同时进行修改、提交操作时，一端先 push 它的 commit 后，建议另一端执行：
