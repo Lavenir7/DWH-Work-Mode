@@ -179,6 +179,22 @@ git pull # 先拉取、同步远程的 commit
   git push # 之后推送直接 push
   ```
 
+- 在其他仓库同步新分支（可选）
+
+  ```sh
+# 第一次同步新分支（其他仓库本地没有新分支）
+  git checkout master # 切换到主分支
+  git pull # 拉取远程仓库的分支信息
+  git checkout new-func # git 自动创建、关联、切换到 new-func 分支
+  # 第一次会输出类似以下的信息：
+  # Branch new-func set up to track remote branch new-func from origin.
+  # Switched to a new branch 'new-func'
+  
+  # 之后同步新分支
+  git checkout new-func # 切换到新功能分支
+git pull
+  ```
+
 - **新功能编写结束后，分两种情况进行处理：**
 
   - 如果新功能可行，则将新功能合并到主分支，并删除新功能分支
