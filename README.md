@@ -182,17 +182,17 @@ git pull # 先拉取、同步远程的 commit
 - 在其他仓库同步新分支（可选）
 
   ```sh
-# 第一次同步新分支（其他仓库本地没有新分支）
+  # 第一次同步新分支（其他仓库本地没有新分支）
   git checkout master # 切换到主分支
   git pull # 拉取远程仓库的分支信息
   git checkout new-func # git 自动创建、关联、切换到 new-func 分支
   # 第一次会输出类似以下的信息：
   # Branch new-func set up to track remote branch new-func from origin.
   # Switched to a new branch 'new-func'
-  
+
   # 之后同步新分支
   git checkout new-func # 切换到新功能分支
-git pull
+  git pull
   ```
 
 - **新功能编写结束后，分两种情况进行处理：**
@@ -208,9 +208,9 @@ git pull
     git branch -d new-func # 删除本地新功能分支
     git push origin --delete new-func # 同步删除远端新功能分支（如果新功能分支推送到过远端）
     ```
-
+  
   - 如果新功能不可行，则强制删除新功能分支
-
+  
     ```sh
     git checkout master # 先切换到主分支（不能删除当前正在使用的分支）
     git branch -D new-func # 强制删除本地新功能分支
