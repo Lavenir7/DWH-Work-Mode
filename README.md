@@ -40,7 +40,7 @@
 >
 > 任何工作目录 / 普通仓库：
 >
-> - 修改前：先 `pull`；
+> - 修改前：先 `pull`；( `git pull` = `git fetch` + `git merge` )
 > - 修改后：要么 `commit + push`、要么丢弃/还原。
 
 >  [!warning]
@@ -184,12 +184,15 @@ git pull # 先拉取、同步远程的 commit
   ```sh
   # 第一次同步新分支（其他仓库本地没有新分支）
   git checkout master # 切换到主分支
-  git pull # 拉取远程仓库的分支信息
-  git checkout new-func # git 自动创建、关联、切换到 new-func 分支
+  git fetch # 拉取远程仓库的分支信息
+  # ① 基于 origin/new-func 创建并切换到 new-func 分支 | 推荐
+  git checkout -b new-func origin/new-func
+  # ② 依赖 git 自动创建、关联、切换到 new-func 分支
+  git checkout new-func
   # 第一次会输出类似以下的信息：
   # Branch new-func set up to track remote branch new-func from origin.
   # Switched to a new branch 'new-func'
-
+  
   # 之后同步新分支
   git checkout new-func # 切换到新功能分支
   git pull
@@ -235,16 +238,25 @@ git pull --rebase
 
 > **git pull --rebase** 详细说明见 [附录 · git pull --rebase](#git pull --rebase)
 
-#### 查看仓库状态
+#### 查看仓库信息
 
 ```sh
-git status # 当前仓库文件的提交情况
+git status # 当前仓库的状态
 
-git log # 版本提交日志
-git log --oneline --graph --decorate -n 10 # 版本提交日志，美化输出
+git log # 当前分支的提交历史
+git log -n 10 # 只显示最近十条提交
+git log --all # 显示所有分支的提交
+git log --oneline # 只展示提交信息
+git log --graph # 显示图状提交历史
+git log --decorate[=no] # 显示[不显示]各分支头（新版默认显示）
+git log --oneline --graph --all # 查看提交历史常用命令
 
-git remote -v # 当前仓库关联的远程 git 仓库信息
-git branch -vv # 当前所在仓库分支的远程跟踪信息
+git remote -v # 当前仓库关联的远程仓库地址
+
+git branch # 当前仓库分支
+git branch -r # 远程仓库分支
+git branch -v # 当前仓库的分支详细信息（哈希和最新提交信息）
+git branch -vv # 当前仓库的分支详细信息及远程跟踪信息
 ```
 
 
