@@ -151,17 +151,18 @@ git pull # 先拉取、同步远程的 commit
 >
 > 在需要加入新功能、但怕破坏原来的内容时，我们需要新建一个分支来实现、调试新功能。
 
-- 首先，确保在主分支（如 `master`），并拉取最新代码，避免主分支落后
+- 首先切换到基分支（如 `base-branch`），并拉取最新代码，避免该分支落后
 
   ```sh
-  git checkout master
+  git checkout base-branch
   git pull
   ```
 
-- **在本地仓库创建并切换到新分支（如 `new-func`）**
+- **基于当前分支创建并切换到新分支（如 `new-func`）**
 
   ```sh
   git checkout -b new-func
+  git push -u origin new-func # 先建立本地分支和远端分支的跟踪关系，便于后续直接 push
   ```
 
 - 在新分支进行实现、调试新功能
@@ -200,15 +201,15 @@ git pull # 先拉取、同步远程的 commit
 
 - **新功能编写结束后，分两种情况进行处理：**
 
-  - 如果新功能可行，则将新功能合并到主分支，并删除新功能分支
+  - 如果新功能可行，则将新功能合并到基分支，并删除新功能分支
 
     ```sh
-    git checkout master # 切换到主分支
+    git checkout base-branch # 切换到基分支
     git pull
-    git merge new-func # 合并新功能到主分支
-    git push origin master # 推送主分支到远端
+    git merge new-func # 合并新功能到当前分支
+    git push origin base-branch # 推送基分支到远端
     # 删除新功能分支
-    git branch -d new-func # 删除本地新功能分支
+    git branch -d new-func # 安全删除本地新功能分支（检查是否存在未合并的内容）
     git push origin --delete new-func # 同步删除远端新功能分支（如果新功能分支推送到过远端）
     ```
   
@@ -216,15 +217,46 @@ git pull # 先拉取、同步远程的 commit
   
     ```sh
     git checkout master # 先切换到主分支（不能删除当前正在使用的分支）
+    git branch -d new-func # 安全删除本地新功能分支（检查是否存在未合并的内容）
     git branch -D new-func # 强制删除本地新功能分支
     git push origin --delete new-func # 同步删除远端新功能分支（如果新功能分支推送到过远端）
     ```
-
+  
+  在经过上述任意一种情况处理后，其他仓库也需要同步删除新功能分支：
+  
+  - （在其他仓库）同步删除新功能分支
+  
+    ```sh
+    git checkout master # 切换到主分支
+    git fetch --prune # 拉取远程仓库的分支信息，并清理本地已失效的远程追踪分支
+    git branch -d new-func # 安全删除本地新功能分支（检查是否存在未合并的内容）
+    git branch -D new-func # 强制删除本地新功能分支
+    ```
+  
+  
   > [!warning]
   >
   > 在多人协作的场景中，`git pull` 或 `git merge` 过程中可能会出现冲突。
   >
   > 此时需要先解决冲突并提交，再继续后续操作。
+
+> [!note]
+>
+> 简化总结（创建新分支）
+>
+> ```sh
+> # 本地仓库创建新分支
+> git checkout base-branch # 切换到基分支
+> git pull # 同步远程仓库
+> git checkout -b new-func # 创建并切换新分支
+> git push -u origin new-func # 建立跟踪关系
+> # new, modify, delete ... add, commit, push # 编辑新功能并提交和推送
+> 
+> # 其他仓库同步新分支
+> git checkout master # 切换到主分支
+> git fetch # 拉取远程仓库信息
+> git checkout -b new-func origin/new-func # 基于 origin/new-func 创建并切换新分支
+> ```
 
 #### 双端同时工作
 
